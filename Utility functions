@@ -1,0 +1,94 @@
+"""
+Utility functions for the contact book application.
+"""
+
+import re
+import os
+import platform
+
+
+def clear_screen():
+    """Clear the terminal screen."""
+    os.system('cls' if platform.system() == 'Windows' else 'clear')
+
+
+def display_menu():
+    """Display the main menu."""
+    print("=" * 50)
+    print("       CONTACT BOOK APPLICATION")
+    print("=" * 50)
+    print("\n1. Add Contact")
+    print("2. View All Contacts")
+    print("3. Search Contact")
+    print("4. Update Contact")
+    print("5. Delete Contact")
+    print("6. Exit")
+    print("=" * 50)
+
+
+def validate_phone(phone):
+    """
+    Validate phone number format.
+    
+    Args:
+        phone (str): Phone number to validate
+        
+    Returns:
+        bool: True if valid, False otherwise
+    """
+    phone = phone.strip()
+    # Allow formats like: 1234567890, 123-456-7890, (123) 456-7890, +1234567890
+    pattern = r'^[\+]?[\d\s\-\(\)]{10,}$'
+    return bool(re.match(pattern, phone))
+
+
+def validate_email(email):
+    """
+    Validate email format.
+    
+    Args:
+        email (str): Email to validate
+        
+    Returns:
+        bool: True if valid, False otherwise
+    """
+    email = email.strip()
+    pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return bool(re.match(pattern, email))
+
+
+def get_valid_input(prompt, input_type):
+    """
+    Get and validate user input.
+    
+    Args:
+        prompt (str): Prompt to display
+        input_type (str): Type of input ('name', 'phone', 'email')
+        
+    Returns:
+        str: Validated input
+        
+    Raises:
+        ValueError: If input is invalid
+    """
+    while True:
+        user_input = input(prompt).strip()
+        
+        if not user_input:
+            print(f"❌ {input_type.capitalize()} cannot be empty.")
+            continue
+        
+        if input_type == "phone":
+            if validate_phone(user_input):
+                return user_input
+            print("❌ Invalid phone number. Please use format: 123-456-7890 or (123) 456-7890 or +1234567890")
+        
+        elif input_type == "email":
+            if validate_email(user_input):
+                return user_input
+            print("❌ Invalid email format. Please use: user@example.com")
+        
+        elif input_type == "name":
+            if len(user_input) >= 2:
+                return user_input
+            print("❌ Name must be at least 2 characters long.")

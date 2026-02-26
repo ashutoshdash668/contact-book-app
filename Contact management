@@ -1,0 +1,178 @@
+"""
+Contacts Manager Module
+Handles all operations related to storing and retrieving contacts.
+"""
+
+import json
+import os
+from pathlib import Path
+from utils import validate_phone, validate_email
+
+
+class ContactsManager:
+    """Manages contact operations and file I/O."""
+    
+    def __init__(self, filename="contacts.txt"):
+        """
+        Initialize the contacts manager.
+        
+        Args:
+            filename (str): Name of the file to store contacts
+        """
+        self.filename = filename
+        self.contacts = []
+        self.load_contacts()
+    
+    def load_contacts(self):
+        """Load contacts from the file."""
+        if os.path.exists(self.filename):
+            try:
+                with open(self.filename, 'r') as file:
+                    for line in file:
+                        line = line.strip()
+                        if line:
+                            try:
+                                contact = json.loads(line)
+                                self.contacts.append(contact)
+                            except json.JSONDecodeError:
+                                print(f"Warning: Could not parse line: {line}")
+            except IOError as e:
+                print(f"Error reading file: {e}")
+        else:
+            self.contacts = []
+    
+    def save_contacts(self):
+        """Save contacts to the file."""
+        try:
+            with open(self.filename, 'w') as file:
+                for contact in self.contacts:
+                    file.write(json.dumps(contact) + '\n')
+            return True
+        except IOError as e:
+            print(f"Error writing to file: {e}")
+            return False
+    
+    def add_contact(self, name, phone, email, address):
+        """
+        Add a new contact.
+        
+        Args:
+            name (str): Contact's name
+            phone (str): Contact's phone number
+            email (str): Contact's email
+            address (str): Contact's address
+            
+        Returns:
+            bool: True if contact was added, False otherwise
+        """
+        # Validate inputs
+        name = name.strip()
+        if not name:
+            raise ValueError("Name cannot be empty.")
+        
+        if not validate_phone(phone):
+            raise ValueError("Invalid phone number format.")
+        
+        if not validate_email(email):
+            raise ValueError("Invalid email format.")
+        
+        # Check for duplicates
+        if any(c['name'].lower() == name.lower() and c['phone'] == phone 
+               for c in self.contacts):
+            raise ValueError("Contact with this name and phone already exists.")
+        
+        contact = {
+            'name': name,
+            'phone': phone,
+            'email': email,
+            'address': address.strip()
+        }
+        
+        self.contacts.append(contact)
+        return self.save_contacts()
+    
+    def view_all_contacts(self):
+        """
+        Get all contacts.
+        
+        Returns:
+            list: List of all contacts
+        """
+        return sorted(self.contacts, key=lambda x: x['name'].lower())
+    
+    def search_by_name(self, query):
+        """
+        Search contacts by name.
+        
+        Args:
+            query (str): Name to search for
+            
+        Returns:
+            list: List of matching contacts
+        """
+        query = query.lower().strip()
+        return [c for c in self.contacts 
+                if query in c['name'].lower()]
+    
+    def search_by_phone(self, query):
+        """
+        Search contacts by phone number.
+        
+        Args:
+            query (str): Phone number to search for
+            
+        Returns:
+            list: List of matching contacts
+        """
+        return [c for c in self.contacts 
+                if query in c['phone']]
+    
+    def update_contact(self, name, phone, email, address):
+        """
+        Update an existing contact.
+        
+        Args:
+            name (str): Name of the contact to update
+            phone (str): New phone number
+            email (str): New email
+            address (str): New address
+            
+        Returns:
+            bool: True if contact was updated, False otherwise
+        """
+        # Validate inputs
+        if not validate_phone(phone):
+            raise ValueError("Invalid phone number format.")
+        
+        if not validate_email(email):
+            raise ValueError("Invalid email format.")
+        
+        for contact in self.contacts:
+            if contact['name'].lower() == name.lower():
+                contact['phone'] = phone
+                contact['email'] = email
+                contact['address'] = address.strip()
+                return self.save_contacts()
+        
+        return False
+    
+    def delete_contact(self, name, phone):
+        """
+        Delete a contact.
+        
+        Args:
+            name (str): Name of the contact to delete
+            phone (str): Phone number of the contact to delete
+            
+        Returns:
+            bool: True if contact was deleted, False otherwise
+        """
+        original_length = len(self.contacts)
+        self.contacts = [c for c in self.contacts 
+                        if not (c['name'].lower() == name.lower() 
+                               and c['phone'] == phone)]
+        
+        if len(self.contacts) < original_length:
+            return self.save_contacts()
+        
+        return False

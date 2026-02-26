@@ -1,0 +1,225 @@
+# Command-Line Contact Book Application
+
+A simple, user-friendly command-line contact book application built with Python. All contact details are stored in a text file for easy access and management.
+
+## Features
+
+✨ **Core Features:**
+- ➕ **Add Contacts** - Add new contacts with name, phone, email, and address
+- 👁️ **View All Contacts** - Display all contacts in sorted order
+- 🔍 **Search Contacts** - Search by name or phone number
+- ✏️ **Update Contacts** - Modify existing contact information
+- 🗑️ **Delete Contacts** - Remove contacts from the contact book
+- 🚪 **Exit** - Gracefully close the application
+
+## Technical Features
+
+- **Data Persistence** - All contacts stored in `contacts.txt` file
+- **Input Validation** - Phone number and email format validation
+- **Error Handling** - Comprehensive error messages and user feedback
+- **User-Friendly Interface** - Clear menus and intuitive navigation
+- **Duplicate Prevention** - Prevents adding duplicate contacts
+- **Sorted Display** - Contacts displayed in alphabetical order
+
+## File Structure
+
+```
+contact-book/
+├── contact_book.py       # Main application entry point
+├── contacts_manager.py   # Contact management logic
+├── utils.py             # Utility functions for validation and UI
+├── contacts.txt         # Contact data storage (auto-created)
+└── README.md           # This file
+```
+
+## Requirements
+
+- Python 3.6 or higher
+- No external dependencies (uses only standard library)
+
+## Installation
+
+1. Clone or download the repository
+2. Ensure you have Python 3.6+ installed
+3. Navigate to the project directory
+
+## Usage
+
+### Running the Application
+
+```bash
+python contact_book.py
+```
+
+Or make it executable on Unix/Linux/Mac:
+
+```bash
+chmod +x contact_book.py
+./contact_book.py
+```
+
+### Using the Menu
+
+```
+==================================================
+       CONTACT BOOK APPLICATION
+==================================================
+
+1. Add Contact
+2. View All Contacts
+3. Search Contact
+4. Update Contact
+5. Delete Contact
+6. Exit
+
+==================================================
+```
+
+### Example Workflow
+
+**1. Adding a Contact:**
+```
+Enter your choice (1-6): 1
+==================================================
+ADD NEW CONTACT
+==================================================
+Enter name: John Doe
+Enter phone number: (123) 456-7890
+Enter email: john@example.com
+Enter address: 123 Main St, City, State 12345
+
+✅ Contact added successfully!
+```
+
+**2. Viewing All Contacts:**
+```
+Enter your choice (1-6): 2
+==================================================
+ALL CONTACTS
+==================================================
+
+--- Contact 1 ---
+Name:    John Doe
+Phone:   (123) 456-7890
+Email:   john@example.com
+Address: 123 Main St, City, State 12345
+```
+
+**3. Searching for a Contact:**
+```
+Enter your choice (1-6): 3
+Search by:
+1. Name
+2. Phone Number
+
+Enter your choice (1-2): 1
+Enter name to search: John
+
+🔍 Found 1 contact(s):
+
+--- John Doe ---
+Phone:   (123) 456-7890
+Email:   john@example.com
+Address: 123 Main St, City, State 12345
+```
+
+## Data Storage Format
+
+Contacts are stored in `contacts.txt` as JSON objects, one per line:
+
+```json
+{"name": "John Doe", "phone": "(123) 456-7890", "email": "john@example.com", "address": "123 Main St, City, State 12345"}
+{"name": "Jane Smith", "phone": "098-765-4321", "email": "jane@example.com", "address": "456 Oak Ave, City, State 67890"}
+```
+
+## Input Validation
+
+### Phone Number
+Valid formats:
+- `1234567890`
+- `123-456-7890`
+- `(123) 456-7890`
+- `+1234567890`
+
+### Email
+Must follow standard email format:
+- `user@example.com`
+- `john.doe@company.co.uk`
+
+### Name
+- Minimum 2 characters
+- Cannot be empty
+
+## Features in Detail
+
+### Add Contact
+- Validates all inputs before adding
+- Prevents duplicate contacts (same name and phone)
+- Stores in sorted order by name
+- Automatic file persistence
+
+### View All Contacts
+- Displays all stored contacts
+- Automatically sorted by name (case-insensitive)
+- Shows complete details for each contact
+
+### Search Contact
+- Search by full or partial name (case-insensitive)
+- Search by partial or full phone number
+- Returns all matching contacts
+
+### Update Contact
+- Search for contact to update
+- Shows current details
+- Allows selective field updates (press Enter to keep existing)
+- Validates new input before saving
+
+### Delete Contact
+- Confirmation required before deletion
+- Handles multiple matches gracefully
+- Permanent removal from file
+
+## Error Handling
+
+The application includes comprehensive error handling for:
+- Invalid phone number formats
+- Invalid email formats
+- Empty input fields
+- File I/O errors
+- JSON parsing errors
+- Duplicate entries
+
+## Future Enhancements
+
+Possible features for future versions:
+- 📧 Export contacts to CSV/vCard format
+- 📊 Import contacts from CSV
+- 📞 Multiple phone numbers per contact
+- 🏷️ Contact categories/groups
+- ⭐ Mark favorite contacts
+- 🔐 Password protection
+- 🌐 Cloud synchronization
+- 📱 Contact birthday reminders
+
+## Troubleshooting
+
+**Q: The application crashes when I run it**
+A: Make sure you have Python 3.6 or higher installed. Run `python --version` to check.
+
+**Q: Contact data is not being saved**
+A: Ensure the program has write permissions in the directory where it's running.
+
+**Q: I can't find the contacts.txt file**
+A: The file is created automatically in the same directory as the script when you add your first contact.
+
+## License
+
+This project is open source and available under the MIT License.
+
+## Author
+
+Created as a practical demonstration of Python file handling, data validation, and command-line UI design.
+
+---
+
+**Happy Contact Managing! 📇**

@@ -1,0 +1,229 @@
+#!/usr/bin/env python3
+"""
+Command-Line Contact Book Application
+Stores user details in a text file with features to add, view, and search contacts.
+"""
+
+import sys
+from contacts_manager import ContactsManager
+from utils import clear_screen, display_menu, get_valid_input
+
+
+def main():
+    """Main function to run the contact book application."""
+    manager = ContactsManager()
+    
+    while True:
+        clear_screen()
+        display_menu()
+        
+        choice = input("\nEnter your choice (1-6): ").strip()
+        
+        if choice == '1':
+            add_contact(manager)
+        elif choice == '2':
+            view_all_contacts(manager)
+        elif choice == '3':
+            search_contact(manager)
+        elif choice == '4':
+            update_contact(manager)
+        elif choice == '5':
+            delete_contact(manager)
+        elif choice == '6':
+            print("\nThank you for using Contact Book. Goodbye!")
+            sys.exit(0)
+        else:
+            print("\n❌ Invalid choice. Please try again.")
+            input("Press Enter to continue...")
+
+
+def add_contact(manager):
+    """Add a new contact to the contact book."""
+    clear_screen()
+    print("=" * 50)
+    print("ADD NEW CONTACT")
+    print("=" * 50)
+    
+    try:
+        name = get_valid_input("Enter name: ", "name")
+        phone = get_valid_input("Enter phone number: ", "phone")
+        email = get_valid_input("Enter email: ", "email")
+        address = input("Enter address: ").strip()
+        
+        if manager.add_contact(name, phone, email, address):
+            print("\n✅ Contact added successfully!")
+        else:
+            print("\n❌ Failed to add contact.")
+    except ValueError as e:
+        print(f"\n❌ Error: {e}")
+    
+    input("\nPress Enter to continue...")
+
+
+def view_all_contacts(manager):
+    """Display all contacts in the contact book."""
+    clear_screen()
+    print("=" * 50)
+    print("ALL CONTACTS")
+    print("=" * 50)
+    
+    contacts = manager.view_all_contacts()
+    
+    if not contacts:
+        print("\n📭 No contacts found.")
+    else:
+        for idx, contact in enumerate(contacts, 1):
+            print(f"\n--- Contact {idx} ---")
+            print(f"Name:    {contact['name']}")
+            print(f"Phone:   {contact['phone']}")
+            print(f"Email:   {contact['email']}")
+            print(f"Address: {contact['address']}")
+    
+    input("\nPress Enter to continue...")
+
+
+def search_contact(manager):
+    """Search for a contact by name or phone number."""
+    clear_screen()
+    print("=" * 50)
+    print("SEARCH CONTACT")
+    print("=" * 50)
+    print("\nSearch by:")
+    print("1. Name")
+    print("2. Phone Number")
+    
+    search_choice = input("\nEnter your choice (1-2): ").strip()
+    
+    if search_choice == '1':
+        query = input("Enter name to search: ").strip()
+        results = manager.search_by_name(query)
+    elif search_choice == '2':
+        query = input("Enter phone number to search: ").strip()
+        results = manager.search_by_phone(query)
+    else:
+        print("\n❌ Invalid choice.")
+        input("Press Enter to continue...")
+        return
+    
+    clear_screen()
+    if not results:
+        print("\n📭 No contacts found.")
+    else:
+        print(f"\n🔍 Found {len(results)} contact(s):\n")
+        for contact in results:
+            print(f"--- {contact['name']} ---")
+            print(f"Phone:   {contact['phone']}")
+            print(f"Email:   {contact['email']}")
+            print(f"Address: {contact['address']}\n")
+    
+    input("Press Enter to continue...")
+
+
+def update_contact(manager):
+    """Update an existing contact."""
+    clear_screen()
+    print("=" * 50)
+    print("UPDATE CONTACT")
+    print("=" * 50)
+    
+    name = input("Enter the name of contact to update: ").strip()
+    contacts = manager.search_by_name(name)
+    
+    if not contacts:
+        print("\n❌ Contact not found.")
+        input("Press Enter to continue...")
+        return
+    
+    if len(contacts) > 1:
+        print("\nMultiple contacts found:")
+        for idx, contact in enumerate(contacts, 1):
+            print(f"{idx}. {contact['name']} - {contact['phone']}")
+        
+        try:
+            choice = int(input("\nSelect contact number: "))
+            if 1 <= choice <= len(contacts):
+                contact = contacts[choice - 1]
+            else:
+                print("\n❌ Invalid choice.")
+                input("Press Enter to continue...")
+                return
+        except ValueError:
+            print("\n❌ Invalid input.")
+            input("Press Enter to continue...")
+            return
+    else:
+        contact = contacts[0]
+    
+    print(f"\nCurrent details for {contact['name']}:")
+    print(f"Phone:   {contact['phone']}")
+    print(f"Email:   {contact['email']}")
+    print(f"Address: {contact['address']}")
+    
+    print("\nEnter new details (press Enter to keep existing value):")
+    
+    try:
+        phone = input("New phone number: ").strip() or contact['phone']
+        email = input("New email: ").strip() or contact['email']
+        address = input("New address: ").strip() or contact['address']
+        
+        if manager.update_contact(contact['name'], phone, email, address):
+            print("\n✅ Contact updated successfully!")
+        else:
+            print("\n❌ Failed to update contact.")
+    except ValueError as e:
+        print(f"\n❌ Error: {e}")
+    
+    input("\nPress Enter to continue...")
+
+
+def delete_contact(manager):
+    """Delete a contact from the contact book."""
+    clear_screen()
+    print("=" * 50)
+    print("DELETE CONTACT")
+    print("=" * 50)
+    
+    name = input("Enter the name of contact to delete: ").strip()
+    contacts = manager.search_by_name(name)
+    
+    if not contacts:
+        print("\n❌ Contact not found.")
+        input("Press Enter to continue...")
+        return
+    
+    if len(contacts) > 1:
+        print("\nMultiple contacts found:")
+        for idx, contact in enumerate(contacts, 1):
+            print(f"{idx}. {contact['name']} - {contact['phone']}")
+        
+        try:
+            choice = int(input("\nSelect contact number to delete: "))
+            if 1 <= choice <= len(contacts):
+                contact = contacts[choice - 1]
+            else:
+                print("\n❌ Invalid choice.")
+                input("Press Enter to continue...")
+                return
+        except ValueError:
+            print("\n❌ Invalid input.")
+            input("Press Enter to continue...")
+            return
+    else:
+        contact = contacts[0]
+    
+    print(f"\nAre you sure you want to delete {contact['name']}? (y/n): ", end="")
+    confirm = input().strip().lower()
+    
+    if confirm == 'y':
+        if manager.delete_contact(contact['name'], contact['phone']):
+            print("\n✅ Contact deleted successfully!")
+        else:
+            print("\n❌ Failed to delete contact.")
+    else:
+        print("\n⚠️  Deletion cancelled.")
+    
+    input("\nPress Enter to continue...")
+
+
+if __name__ == "__main__":
+    main()

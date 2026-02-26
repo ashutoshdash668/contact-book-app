@@ -1,0 +1,33 @@
+"""
+Script to populate the contact book with sample data for testing.
+Run once: python sample_data.py
+"""
+
+from contacts_manager import ContactsManager
+
+
+def populate_sample_data():
+    """Add sample contacts to the contact book."""
+    manager = ContactsManager()
+    
+    sample_contacts = [
+        ("Alice Johnson", "555-0101", "alice@example.com", "100 Pine St, Boston, MA"),
+        ("Bob Smith", "555-0102", "bob@example.com", "200 Oak Ave, New York, NY"),
+        ("Charlie Brown", "555-0103", "charlie@example.com", "300 Elm St, Chicago, IL"),
+        ("Diana Prince", "555-0104", "diana@example.com", "400 Maple Ln, LA, CA"),
+        ("Eve Wilson", "555-0105", "eve@example.com", "500 Cedar Rd, Houston, TX"),
+    ]
+    
+    for name, phone, email, address in sample_contacts:
+        try:
+            manager.add_contact(name, phone, email, address)
+            print(f"✅ Added: {name}")
+        except ValueError as e:
+            print(f"⚠️  {name}: {e}")
+
+
+if __name__ == "__main__":
+    print("Populating contact book with sample data...\n")
+    populate_sample_data()
+    print("\n✅ Sample data loaded successfully!")
+    print("Run 'python contact_book.py' to start the application.")
